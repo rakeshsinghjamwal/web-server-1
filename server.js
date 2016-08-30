@@ -1,22 +1,12 @@
 var express = require('express'); 
+var bodyParser = require('body-parser');
+
 var app = express(); 
 var PORT = process.env.PORT || 3000;
-var todos = [{
-	id:1,
-	description:'Go to market', 
-	completed:false
-},
-{
-	id:2,
-	description:'Meet frank',
-	completed:false
-},
-{
-	id:3,
-	description:'Wash the car',
-	completed:true
-}
-];
+var todos = [];
+var todoNextId = 1; 
+
+app.use(bodyParser.json());
 
 app.get('/', function(req, res){
 	res.send('App is running at :' + PORT +'!');
@@ -31,7 +21,6 @@ app.get('/todos',function(req, res){
 app.get('/todos/:id', function (req, res) {
 	var todoItemId = parseInt(req.params.id, 10);
 	var todoItem;
-
 	todos.forEach(function(item){
 		if( item.id === todoItemId )
 		{
@@ -41,17 +30,22 @@ app.get('/todos/:id', function (req, res) {
 
 	if(!todoItem)
 	{
-		console.log('not found')
 		res.status(404).send();
 	}
 	else 
 	{
-		console.log('found');
 		res.json(todoItem);
 	}
-	//res.send('Asking for todo with id of ' + req.params.id);
+});
 
-})
+// POST /todos
+app.post('/todos',function(req, res){
+	var body = req.body;
+	body.id = todoNextId;
+	todos.push(body);
+	res.json(body);
+	todoNextId +=1;
+});
 
 app.listen(PORT,function(){
 	console.log('Server started at:' + PORT + '!');
