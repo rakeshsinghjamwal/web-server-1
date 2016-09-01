@@ -45,6 +45,22 @@ app.post('/todos',function(req, res){
 	todoNextId +=1;
 });
 
+//DELETE /todo/:id 
+app.delete('/todos/:id', function(req,res){
+	var todoId = parseInt(req.params.id, 10);
+
+	var todoItem = _.findWhere(todos,{id:todoId});
+
+	if(!todoItem)
+	{
+		res.status(404).json({"error":"no todo find with that id"});
+	}
+	todos = _.without(todos,todoItem);
+	res.json(todoItem);
+
+});
+
+
 app.listen(PORT,function(){
 	console.log('Server started at:' + PORT + '!');
 });
