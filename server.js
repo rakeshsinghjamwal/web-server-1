@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db.js');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -51,27 +52,28 @@ app.get('/todos', function(req, res) {
 // GET /todos/:id
 app.get('/todos/:id', function(req, res) {
 	var todoItemId = parseInt(req.params.id, 10);
-	var todoItem = _.findWhere(todos, {
-		id: todoItemId
+	db.todo.findById(todoItemId).then(function(todo){
+		if(todo)
+			return res.json(todo);
+		else 
+			return res.status(404).json('No item found');
+	}).catch(function(e){
+		return res.status(500).json(e);
 	});
-	if (!todoItem) {
-		res.status(404).send();
-	} else {
-		res.json(todoItem);
-	}
+
 });
 
 // POST /todos
 app.post('/todos', function(req, res) {
 	var body = _.pick(req.body, 'description', 'completed');
-	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
-		return res.status(404).send();
-	}
-	body.description = body.description.trim();
-	body.id = todoNextId;
-	todos.push(body);
-	res.json(body);
-	todoNextId += 1;
+	db.todo.create({
+		description:body.description
+	}).then(function(todo){
+		res.json(todo);
+	}).catch(function(e){
+		res.status(400).json(e);
+	});
+
 });
 
 //DELETE /todo/:id 
@@ -123,8 +125,8 @@ app.put('/todos/:id', function(req, res) {
 	res.json(todoItem);
 });
 
-
-
-app.listen(PORT, function() {
-	console.log('Server started at:' + PORT + '!');
+db.sequelize.sync().then(function() {
+	app.listen(PORT, function() {
+		console.log('Server started at:' + PORT + '!');
+	});
 });
