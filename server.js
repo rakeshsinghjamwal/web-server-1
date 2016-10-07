@@ -60,7 +60,6 @@ app.get('/todos/:id', function(req, res) {
 	}).catch(function(e){
 		return res.status(500).json(e);
 	});
-
 });
 
 // POST /todos
