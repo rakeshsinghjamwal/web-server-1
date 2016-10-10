@@ -28,52 +28,45 @@ var Todo = sequelize.define('todo',{
 //sequelize.sync({force:true})
 sequelize.sync().then(function(){
 	console.log('Everything is synced');
-	Todo.findById(1).then(function(todo){
-		if(todo){
-			console.log(todo.toJSON());
-		}
-		else 
-			console.log('item no found');
 
-	});;
-	// Todo.create({
-	// 				description:'Take out the boy'
-	// 			})
-	// 	.then(
-	// 			function(todo)
-	// 				{
-	// 					return Todo.create
-	// 						({
-	// 							description:'Wash the car'
-	// 						});
-	// 				}
-	// 		)
-	// 	.then(function(){
+	Todo.create({
+					description:'Take out the boy'
+				})
+		.then(
+				function(todo)
+					{
+						return Todo.create
+							({
+								description:'Wash the car'
+							});
+					}
+			)
+		.then(function(){
 
-	// 		//return Todo.findById(1);
-	// 		return Todo.findAll({
-	// 			where:{
-	// 				description:{
-	// 					$like:'%boy%'
-	// 				}
-	// 			}
-	// 		});
-	// 	})
-	// 	.then(function(todos){
-	// 		if(todos)
-	// 		{
-	// 			todos.forEach(function(todo){
-	// 				console.log(todo.toJSON());
-	// 			})
-	// 		}
-	// 		else 
-	// 		{
-	// 			console.log('no todo found'); 
-	// 		}
-	// 	})
-	// 	.catch(function(e)
-	// 		{
-	// 			console.log(e);
-	// 		});
+			//return Todo.findById(1);
+			return Todo.findAll({
+				where:{
+					description:{
+						$like:'%boy%'
+					}
+				}
+			});
+		})
+		.then(function(todos){
+			if(todos)
+			{
+				todos.forEach(function(todo){
+					console.log(todo.toJSON());
+				})
+			}
+			else 
+			{
+				console.log('no todo found'); 
+			}
+		})
+		.catch(function(e)
+			{
+				console.log(e);
+			});
 
 });
