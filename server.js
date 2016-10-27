@@ -122,7 +122,31 @@ app.put('/todos/:id', function(req, res) {
 	});
 });
 
-db.sequelize.sync().then(function() {
+app.post('/users', function(req, res){
+	
+	console.log(_.pick(req.body, 'email','password'));
+
+	var userBody = req.body; 
+	console.log(userBody);
+	db.user.create({
+		email:userBody.email, 
+		password:userBody.password
+	})
+	.then(function(user){
+		if(user){
+			console.log('user successfully created');
+			res.json(user.toPublicJSON());
+		}
+		else 
+		{
+			res.sendStatus(400).send();
+		}
+	}, function(e){
+		res.sendStatus(401).json(e);
+	});
+});
+
+db.sequelize.sync({ force:true }).then(function() {
 	app.listen(PORT, function() {
 		console.log('Server started at:' + PORT + '!');
 	});
